@@ -25,4 +25,8 @@ class Sigmoid(Layer):
 
 class Tanh(Layer):
     def forward(self, x):
-        return np.tanh(x), {''}
+        tanh = np.tanh(x)
+        return tanh, {'tanh': tanh}
+
+    def backward(self, grads, cache):
+        return (1 - cache['tanh']**2) * grads
