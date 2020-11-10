@@ -29,4 +29,4 @@ class Tanh(Layer):
         return tanh, {'tanh': tanh}
 
     def backward(self, grads, cache):
-        return (1 - cache['tanh']**2) * grads
+        return (1 - cache['tanh']**2) * grads, {}

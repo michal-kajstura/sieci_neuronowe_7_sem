@@ -50,7 +50,9 @@ class Trainer:
     def _validate(self, model, generator):
         outputs_y = zip(*((model.forward(x)[0], y) for x, y in generator))
         outputs, y_true = map(np.concatenate, outputs_y)
-        return {name: metric(outputs, y_true) for name, metric in self._metrics.items()}
+        loss, _ = self._loss_func(outputs, y_true)
+        metrics = {name: metric(outputs, y_true) for name, metric in self._metrics.items()}
+        return {'loss': loss, **metrics}
 
     def _stop_condition(self, metrics):
         if self._monitor:
