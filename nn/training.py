@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 
 class Trainer:
-    def __init__(self, optimizer_func, loss_func, epochs=10, metrics=None,
+    def __init__(self, optimizer, loss_func, epochs=10, metrics=None,
                  monitor=None, mode='max', patience=3, delta=0.005):
-        self._optimizer_func = optimizer_func
+        self._optimizer = optimizer
         self._loss_func = loss_func
         self._epochs = epochs
         self._metrics = metrics or {}
@@ -27,7 +27,7 @@ class Trainer:
                 logits, caches = model.forward(x_batch)
                 loss_value, loss_grad = self._loss_func(logits, y_batch)
                 grads = model.backward(loss_grad, caches)
-                self._optimizer_func(grads, model.weights)
+                self._optimizer.step(grads)
 
                 pbar.set_description(f'Loss: {loss_value:.4}, Patience: {patience}')
 

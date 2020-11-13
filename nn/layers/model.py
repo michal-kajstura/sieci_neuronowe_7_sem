@@ -1,28 +1,31 @@
+from collections import OrderedDict
+
 from nn.layers.base import Layer
 
 
 class Model(Layer):
     def __init__(self, *layers):
-        self._layers = layers
+        self._layers = OrderedDict(
+            {f'{i}_{type(layer).__name__}': layer for i, layer in enumerate(layers)})
 
     def forward(self, x):
-        caches = []
-        for layer in self._layers:
+        caches = {}
+        for name, layer in self._layers.items():
             x, cache = layer.forward(x)
-            caches.append(cache)
+            caches[name] = cache
         return x, {'caches': caches}
 
     def backward(self, upstream_grads, cache):
-        grads = []
+        grads = {}
         caches = cache['caches']
-        for idx in reversed(range(len(self._layers))):
-            layer = self._layers[idx]
-            cache = caches[idx]
+        for name in reversed(self._layers):
+            layer = self._layers[name]
+            cache = caches[name]
             upstream_grads, grad = layer.backward(upstream_grads, cache)
-            grads.append(grad)
+            grads[name] = grad
 
-        return grads[::-1]
+        return grads
 
     @property
     def weights(self):
-        return [layer.weights for layer in self._layers]
+        return {name: layer.weights for name, layer in self._layers.items()}
