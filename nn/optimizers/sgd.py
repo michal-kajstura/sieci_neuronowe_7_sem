@@ -10,7 +10,8 @@ class SGD(BaseOptimizer):
         super().__init__(layers)
         self._learning_rate = learning_rate
 
-    def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
+    def _update(self, layer: np.ndarray, grad: np.ndarray, _: Dict[str, Any]) -> Dict[str, Any]:
         layer -= self._learning_rate * grad
+        return {}
 
 

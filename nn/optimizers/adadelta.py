@@ -15,11 +15,9 @@ class Adadelta(BaseOptimizer):
         self._delta = delta
         self._eps = eps
 
-    def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
-        cache = self._cache.get(
-            name, {'g_avg': np.zeros_like(grad), 'u_avg': np.zeros_like(grad)})
-        g_avg_t_minus_1 = cache['g_avg']
-        update_avg_t_minus_1 = cache['g_avg']
+    def _update(self, layer: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
+        g_avg_t_minus_1 = cache.get('g_avg', np.zeros_like(grad))
+        update_avg_t_minus_1 = cache.get('u_avg', np.zeros_like(grad))
 
         g_avg_square = linear_combination(np.mean(g_avg_t_minus_1**2), grad**2, self._delta)
 
@@ -31,5 +29,4 @@ class Adadelta(BaseOptimizer):
 
         layer -= (update_rms / g_rms) * grad
 
-        cache['g_avg'] = g_avg_square
-        cache['u_avg'] = update_avg_square
+        return {'g_avg': g_avg_square, 'u_avg': update_avg_square}

@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from pandas import np
+import numpy as np
 
 from nn.optimizers.base import BaseOptimizer
 
@@ -12,9 +12,11 @@ class Adagrad(BaseOptimizer):
         self._cache = {}
         self._eps = eps
 
-    def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
-        g_t_i = self._cache.get(name, np.zeros_like(grad))
+    def _update(self, layer: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
+        g_t_i = self._cache.get('g', np.zeros_like(grad))
+
         g_t_i += grad**2
         g = grad / np.sqrt(g_t_i + self._eps)
         layer -= self._learning_rate * g
-        self._cache[name] = g_t_i
+
+        return {'g': g_t_i}

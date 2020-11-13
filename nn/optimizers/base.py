@@ -7,6 +7,7 @@ import numpy as np
 class BaseOptimizer(abc.ABC):
     def __init__(self, layers: Dict[str, Any]):
         self._layers = layers
+        self._cache = {}
 
     def step(self, grads: Dict[str, Any]):
         self._step(self._layers, grads)
@@ -19,8 +20,9 @@ class BaseOptimizer(abc.ABC):
             if isinstance(layer, Dict):
                 self._step(layer, grad, unique_name)
             else:
-                self._update(layer, grad, unique_name)
+                cache = self._cache.get(unique_name, {})
+                cache.update(self._update(layer, grad, cache))
 
     @abc.abstractmethod
-    def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
+    def _update(self, layer: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
         pass

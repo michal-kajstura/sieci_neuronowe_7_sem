@@ -15,20 +15,17 @@ class Adam(BaseOptimizer):
         self._beta2 = beta2
         self._eps = eps
 
-    def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
-        cache = self._cache.get(name, {'v': np.zeros_like(grad), 'm': np.zeros_like(grad)})
-        m_t_minus_1 = cache['m']
-        v_t_minus_1 = cache['v']
+    def _update(self, layer: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
+        m_t_minus_1 = cache.get('m', np.zeros_like(grad))
+        v_t_minus_1 = cache.get('v', np.zeros_like(grad))
+        timestep = cache.get('timestep', 1)
 
         m = self._beta1 * m_t_minus_1 + (1. - self._beta1) * grad
         v = self._beta2 * v_t_minus_1 + (1. - self._beta2) * grad**2
 
-        timestep = self._cache.get('__timestep', 1)
         adjusted_m = m / (1. - self._beta1**timestep)
         adjusted_v = v / (1. - self._beta2**timestep)
 
         layer -= (self._learning_rate * adjusted_m) / (np.sqrt(adjusted_v) + self._eps)
 
-        cache['__timestep'] = timestep + 1
-        cache['m'] = adjusted_m
-        cache['v'] = adjusted_v
+        return {'m': m, 'v': v, 'timestep': timestep}
