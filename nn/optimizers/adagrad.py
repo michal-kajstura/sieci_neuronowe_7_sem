@@ -14,7 +14,7 @@ class Adagrad(BaseOptimizer):
 
     def _update(self, layer: np.ndarray, grad: np.ndarray, name: str):
         g_t_i = self._cache.get(name, np.zeros_like(grad))
-        g_t_i += grad ** 2
+        g_t_i += grad**2
         g = grad / np.sqrt(g_t_i + self._eps)
         layer -= self._learning_rate * g
         self._cache[name] = g_t_i
