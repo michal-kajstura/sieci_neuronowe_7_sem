@@ -1,10 +1,10 @@
-from nn.init import init_weights
+from nn.init import random_normal_init
 from nn.layers.base import Layer
 import numpy as np
 
 
 class Linear(Layer):
-    def __init__(self, in_size, out_size, init_func=init_weights):
+    def __init__(self, in_size, out_size, init_func=random_normal_init):
         self._weight = init_func(np.zeros((in_size, out_size), dtype=np.float32))
         self._bias = np.zeros((1, out_size))
 

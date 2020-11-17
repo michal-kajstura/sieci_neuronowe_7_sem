@@ -20,6 +20,8 @@ class Trainer:
 
     def train(self, model, train_generator, validation_generator):
         patience = self._patience
+
+        training_results = []
         for epoch in range(self._epochs):
             pbar = tqdm(train_generator, total=len(train_generator))
             loss_value = 0
@@ -33,11 +35,11 @@ class Trainer:
 
             train_metrics = self._validate(model, train_generator)
             val_metrics = self._validate(model, validation_generator)
+            training_results.append({'train': train_metrics, 'val': val_metrics})
+
             pbar.set_description(f'Loss: {loss_value:.4},'
                                  f' Patience: {patience},'
                                  f' Accuracy: {val_metrics["accuracy"]}')
-
-            yield train_metrics, val_metrics
 
             if self._stop_condition(val_metrics):
                 patience -= 1
@@ -79,20 +81,12 @@ class DataGenerator:
     def __iter__(self):
         if self._shuffle:
             np.random.shuffle(self._data)
-        batches = iter(_batchify(self._data, self._batch_size))
 
-        for batch in batches:
+        for batch in _batchify(self._data, self._batch_size):
             yield batch
 
     def __len__(self):
         return len(self._data) // self._batch_size
-        # while True:
-        #     try:
-        #         yield next(batches)
-        #     except StopIteration:
-
-        #         batches = iter(_batchify(self._data, self._batch_size))
-        #         break
 
 
 def _batchify(items, batch_size):

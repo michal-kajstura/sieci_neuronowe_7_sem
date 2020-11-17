@@ -5,24 +5,24 @@ import numpy as np
 
 
 class BaseOptimizer(abc.ABC):
-    def __init__(self, layers: Dict[str, Any]):
-        self._layers = layers
+    def __init__(self, weights: Dict[str, Any]):
+        self.weights = weights
         self._cache = {}
 
     def step(self, grads: Dict[str, Any]):
-        self._step(self._layers, grads)
+        self._step(self.weights, grads)
 
-    def _step(self, layers: Dict[str, Any], grads: Dict[str, Any], unique_name: str = ''):
-        for name, layer in layers.items():
+    def _step(self, weights: Dict[str, Any], grads: Dict[str, Any], unique_name: str = ''):
+        for name, weight in weights.items():
             unique_name += f'_{name}'
 
             grad = grads[name]
-            if isinstance(layer, Dict):
-                self._step(layer, grad, unique_name)
+            if isinstance(weight, Dict):
+                self._step(weight, grad, unique_name)
             else:
                 cache = self._cache.get(unique_name, {})
-                cache.update(self._update(layer, grad, cache))
+                cache.update(self._update(weight, grad, cache))
 
     @abc.abstractmethod
-    def _update(self, layer: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
+    def _update(self, weight: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
         pass
