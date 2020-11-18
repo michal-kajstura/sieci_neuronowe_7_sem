@@ -48,6 +48,7 @@ class Trainer:
 
             if patience == 0:
                 break
+        return training_results
 
     def _validate(self, model, generator):
         outputs_y = zip(*((model.forward(x)[0], y) for x, y in generator))
