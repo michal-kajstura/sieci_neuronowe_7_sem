@@ -92,7 +92,7 @@ experiment_specs = {
         (Adagrad, {'learning_rate': 1e-3}),
         (Adadelta, {'delta': 0.8}),
         (Adadelta, {'delta': 0.9}),
-        # (Adadelta, {'delta': 0.99}),
+        (Adadelta, {'delta': 0.99}),
         (Adam, {'learning_rate': 1e-1}),
         (Adam, {'learning_rate': 1e-2}),
         (Adam, {'learning_rate': 1e-3}),

@@ -29,4 +29,4 @@ class Adam(BaseOptimizer):
 
         weight -= (self._learning_rate * adjusted_m) / (np.sqrt(adjusted_v) + self._eps)
 
-        return {'m': m, 'v': v, 'timestep': timestep}
+        return {'m': m, 'v': v, 'timestep': timestep + 1}
