@@ -21,7 +21,7 @@ class BaseOptimizer(abc.ABC):
                 self._step(weight, grad, unique_name)
             else:
                 cache = self._cache.get(unique_name, {})
-                cache.update(self._update(weight, grad, cache))
+                self._cache[unique_name] = self._update(weight, grad, cache)
 
     @abc.abstractmethod
     def _update(self, weight: np.ndarray, grad: np.ndarray, cache: Dict[str, Any]) -> Dict[str, Any]:
