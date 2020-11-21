@@ -106,25 +106,27 @@ experiment_specs = {
     'weight_init_func': [random_normal_init, xavier_init, he_init],
 }
 
+n_iters = 10
 result_path = Path('./result.json')
 result = {}
 for arg, values in experiment_specs.items():
     result[arg] = {}
     for value in values:
-        print(f'{arg}: {str(value)}\n')
+        result[arg][str(value)] = []
+        for it in range(n_iters):
+            print(f'{arg}: {str(value)}\n')
 
-        if isinstance(value, tuple):
-            o, k = value
-            args = {'optimizer_class': o, 'optimizer_kwargs': k}
-        else:
-            args = {arg: value}
+            if isinstance(value, tuple):
+                o, k = value
+                args = {'optimizer_class': o, 'optimizer_kwargs': k}
+            else:
+                args = {arg: value}
 
-        result[arg][str(value)] = {}
-        metrics, experiment_time = experiment(**args)
-        result[arg][str(value)]['value'] = metrics
-        result[arg][str(value)]['time'] = experiment_time
+            # result[arg][str(value)] =
+            metrics, _ = experiment(**args)
+            result[arg][str(value)].append(metrics)
 
-        print(f'Best validation accuracy: {max(a["val"]["accuracy"] for a in metrics):.4}\n')
+            print(f'Best validation accuracy: {max(a["val"]["accuracy"] for a in metrics):.4}\n')
 
         with result_path.open('w') as file:
             json.dump(result, file, indent=4)

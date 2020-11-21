@@ -30,7 +30,7 @@ class NesterovMomentum(Momentum):
         v_t_minus_1 = cache.get('v', 0.)
 
         vv = self._momentum * v_t_minus_1 + self._learning_rate * grad
-        v = self._momentum * v_t_minus_1 + (self._momentum + 1.) * vv
+        v = - self._momentum * v_t_minus_1 + (self._momentum + 1.) * vv
         # v = self._momentum * v_t_minus_1 + self._learning_rate * (grad - self._momentum * v_t_minus_1)
         weight -= v
 
