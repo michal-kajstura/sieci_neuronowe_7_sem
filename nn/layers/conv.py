@@ -23,7 +23,7 @@ class Conv2d(Layer):
         width_out = _compute_size(width, filter_width, self._padding, self._stride)
 
         padding = (self._padding, self._padding)
-        x_padded = np.pad(x, ((0, 0), padding, (0, 0), padding), mode='constant', constant_values=0)
+        x_padded = np.pad(x, ((0, 0), (0, 0), padding, padding), mode='constant', constant_values=0)
         filters_reshaped = self._weight.reshape(channels_out, -1).T
 
         out = np.zeros((batch, channels_out, height_out, width_out), dtype=self._weight.dtype)
@@ -37,7 +37,7 @@ class Conv2d(Layer):
                     filters_reshaped,
                 ) + self._bias
 
-        return out, {'x': x}
+        return out, {'x': x_padded}
 
     def backward(self, grads, cache):
         channels_out, channels_in, filter_height, filter_width = self._weight.shape

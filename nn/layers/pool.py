@@ -15,7 +15,7 @@ class MaxPool(Layer):
         width_out = _compute_size(width, self._kernel_size, self._padding, self._stride)
 
         padding = (self._padding, self._padding)
-        x_padded = np.pad(x, ((0, 0), padding, (0, 0), padding), mode='constant', constant_values=0)
+        x_padded = np.pad(x, ((0, 0), (0, 0), padding, padding), mode='constant', constant_values=0)
 
         out = np.zeros((batch, channels, height_out, width_out), dtype=x.dtype)
         mask = np.zeros_like(x_padded, dtype=np.uint8)
@@ -29,7 +29,7 @@ class MaxPool(Layer):
                 out[..., h, w] = flat_window[window_mask].reshape(window.shape[:2])
                 mask[..., h_start: h_end, w_start: w_end] = window_mask.reshape((*window.shape[:2], 2, 2))
 
-        return out, {'x': x, 'mask': mask.astype(bool)}
+        return out, {'x': x_padded, 'mask': mask.astype(bool)}
 
     def backward(self, grads, cache):
         x = cache['x']

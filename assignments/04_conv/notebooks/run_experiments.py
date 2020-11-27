@@ -45,13 +45,13 @@ def time_it(func):
     return inner
 
 @time_it
-def experiment(kernel_size, linear_size):
+def experiment(kernel_size, padding):
     model = Model(
-        Conv2d(1, 8, kernel_size=kernel_size, init_func=he_init),
+        Conv2d(1, 8, kernel_size=kernel_size, padding=padding, init_func=he_init),
         ReLU(),
         MaxPool(),
         Flatten(),
-        Linear(linear_size, 128),
+        Linear(1568, 128),
         Linear(128, 10),
     )
 
@@ -72,18 +72,21 @@ def experiment(kernel_size, linear_size):
 
 
 experiment_specs = [
-    (3, 1352),
-    (5, 1152),
-    (7, 968),
-    (11, 648),
-    (17, 288),
+    (3, 1),
+    (5, 2),
+    (7, 3),
+    (11, 5),
+    (17, 8),
 ]
 
 result_path = Path('./result-conv.json')
 result = {}
-for kernel_size, linear_size in experiment_specs:
-    metrics, exp_time = experiment(kernel_size, linear_size)
-    result[kernel_size] = metrics
-    print(f'Best validation accuracy: {max(a["val"]["accuracy"] for a in metrics):.4}\n')
+n_iter = 5
+for kernel_size, padding in experiment_specs:
+    result[kernel_size] = []
+    for _ in range(n_iter):
+        metrics, exp_time = experiment(kernel_size, padding)
+        result[kernel_size].append(metrics)
+        print(f'Best validation accuracy: {max(a["val"]["accuracy"] for a in metrics):.4}\n')
     with result_path.open('w') as file:
         json.dump(result, file, indent=4)
