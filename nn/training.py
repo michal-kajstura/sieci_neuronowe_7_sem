@@ -35,6 +35,7 @@ class Trainer:
 
             train_metrics = self._validate(model, train_generator)
             val_metrics = self._validate(model, validation_generator)
+            print(val_metrics)
             training_results.append({'train': train_metrics, 'val': val_metrics})
 
             pbar.set_description(f'Loss: {loss_value:.4},'

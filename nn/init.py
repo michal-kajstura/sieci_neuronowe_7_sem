@@ -7,12 +7,18 @@ def random_normal_init(weight: np.ndarray, std=0.3):
 
 
 def xavier_init(weight: np.ndarray):
-    n_in, n_out = weight.shape
+    n_in, n_out = _get_shapes(weight.shape)
     variance = 2. / (n_in + n_out)
-    return randn(n_in, n_out) * np.sqrt(variance)
+    return randn(*weight.shape) * np.sqrt(variance)
 
 
 def he_init(weight: np.ndarray):
-    n_in, n_out = weight.shape
+    n_in, n_out = _get_shapes(weight.shape)
     variance = 2. / n_in
-    return randn(n_in, n_out) * np.sqrt(variance)
+    return randn(*weight.shape) * np.sqrt(variance)
+
+
+def _get_shapes(shape):
+    n_in = shape[0] if len(shape) == 2 else np.prod(shape[1:])
+    n_out = shape[1] if len(shape) == 2 else shape[0]
+    return n_in, n_out
